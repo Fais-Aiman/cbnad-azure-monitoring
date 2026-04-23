@@ -87,3 +87,11 @@ Results:
 - Linux & VM Management
 - Monitoring & Observability
 - DevOps Practices
+
+## ⚙️ Zabbix Alert Configuration
+
+### 🔔 Trigger Definitions (CPU / Memory / Disk)
+![Triggers](images/zabbix-triggers.png)
+
+### 📩 Alert Actions (Telegram Integration)
+![Actions](images/zabbix-actions.png)
