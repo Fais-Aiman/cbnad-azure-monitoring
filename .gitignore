@@ -1,8 +1,18 @@
+# Terraform
 .terraform/
-terraform.tfstate
-terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Variables / secrets
 *.tfvars
+backend.hcl
+
+# SSH keys
+*.pem
 *.ppk
+
+# OS / misc
 *.exe
 *.msi
 *.zip
