@@ -1,3 +1,5 @@
+![Terraform CI](https://github.com/Fais-Aiman/cbnad-azure-monitoring/actions/workflows/terraform-ci.yml/badge.svg)
+
 # 🚀 Cloud-Based Monitoring & Anomaly Detection (Terraform + Azure)
 
 ## 📸 System Preview
@@ -165,10 +167,20 @@ Access services after deployment:
 - Node Exporter
 - Telegram Bot API
 
+## 🔄 CI/CD Pipeline
+
+This project includes a GitHub Actions workflow for Terraform validation.
+
+Pipeline steps:
+- Terraform fmt
+- Terraform inits
+- Terraform validates
+- Terraform plan (safe execution)
+
 ## 🔮 Future Improvements
 
 - HTTPS with NGINX reverse proxy
-- Remote Terraform state (Azure Storage)
+- GitHub Actions deployment with Azure Service Principal
 - Multi-node monitoring
 - Kubernetes deployment
 - AI-based anomaly detection
