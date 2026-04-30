@@ -1,0 +1,14 @@
+# Example Ansible variables for CB-NAD monitoring deployment
+# Copy this file to monitoring.yml and replace the placeholder values before running Ansible.
+
+zabbix_db_name: zabbix
+zabbix_db_user: zabbix
+zabbix_db_password: CHANGE_ME_ZABBIX_DB_PASSWORD
+
+grafana_admin_user: admin
+grafana_admin_password: CHANGE_ME_GRAFANA_ADMIN_PASSWORD
+
+monitoring_dir: /opt/cbnad
+
+scrape_interval: 5s
+vm_private_ip: 10.0.0.4

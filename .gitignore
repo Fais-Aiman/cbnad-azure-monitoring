@@ -16,3 +16,5 @@ backend.hcl
 *.exe
 *.msi
 *.zip
+
+ansible/group_vars/monitoring.yml
