@@ -151,6 +151,8 @@ This project has been upgraded with Ansible to automate server configuration aft
 ```text
 ansible/
 ├── ansible.cfg
+├── files/
+│   └── grafana-dashboard-node.json
 ├── group_vars/
 │   └── monitoring.example.yml
 ├── inventories/
@@ -162,6 +164,8 @@ ansible/
 └── templates/
     ├── alerts.yml.j2
     ├── docker-compose.yml.j2
+    ├── grafana-dashboard-provider.yml.j2
+    ├── grafana-datasource.yml.j2
     └── prometheus.yml.j2
 ```
 
@@ -205,6 +209,33 @@ Automated tasks include:
 - Displaying the running containers for verification
 
 The Ansible automation connects to the Azure VM through SSH, applies the required configuration, and starts the monitoring services as containers.
+
+#### Grafana Provisioning with Ansible
+
+This project includes Grafana provisioning through Ansible to reduce manual dashboard setup after deployment.
+
+Ansible now provisions:
+
+- Prometheus data source
+- Grafana dashboard provider
+- CB-NAD Node Overview dashboard
+
+Provisioning files:
+
+| File | Purpose |
+|---|---|
+| `ansible/templates/grafana-datasource.yml.j2` | Defines Prometheus as the default Grafana data source |
+| `ansible/templates/grafana-dashboard-provider.yml.j2` | Defines the Grafana dashboard provider and dashboard folder |
+| `ansible/files/grafana-dashboard-node.json` | Provides the CB-NAD Node Overview dashboard JSON |
+
+The dashboard is automatically loaded into Grafana after the monitoring stack is deployed using Ansible.
+
+Verified result:
+
+- Prometheus appears as the default Grafana data source
+- `CB-NAD` dashboard folder is created
+- `CB-NAD Node Overview` dashboard appears automatically
+- CPU, memory, and disk usage panels are displayed
 
 #### 3. Basic Server Hardening Playbook
 
@@ -279,13 +310,15 @@ Deploy the monitoring stack using Docker Compose:
 ```bash
 ansible-playbook -i ansible/inventories/dev.ini ansible/playbooks/02-deploy-monitoring.yml
 ```
-```markdown
+
+This playbook also provisions the Grafana Prometheus data source, dashboard provider, and `CB-NAD Node Overview` dashboard automatically.
+
+
 Apply basic server hardening:
 
 ```bash
 ansible-playbook -i ansible/inventories/dev.ini ansible/playbooks/03-basic-hardening.yml
 ```
----
 
 ### 3. Verify Docker Compose Services
 
@@ -336,11 +369,6 @@ Docker Compose Monitoring Stack Deployed
 Grafana / Prometheus / Zabbix Running
 
 ```
-Access services after deployment:
-
-- Grafana → http://<public-ip>:3000  
-- Zabbix → http://<public-ip>:8080  
-- Prometheus → http://<public-ip>:9090  
 
 ## ⚠️ Challenges & Solutions
 
