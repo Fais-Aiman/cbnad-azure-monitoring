@@ -1,0 +1,89 @@
+---
+- name: Apply basic security hardening to Azure Ubuntu VM
+  hosts: monitoring_servers
+  become: true
+
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: true
+
+    - name: Install basic security and administration packages
+      apt:
+        name:
+          - fail2ban
+          - unattended-upgrades
+          - apt-listchanges
+          - curl
+          - vim
+          - htop
+        state: present
+
+    - name: Enable unattended security upgrades
+      copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+
+    - name: Create SSH hardening configuration
+      copy:
+        dest: /etc/ssh/sshd_config.d/99-cbnad-hardening.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          PasswordAuthentication no
+          PermitRootLogin no
+          PubkeyAuthentication yes
+          X11Forwarding no
+          MaxAuthTries 3
+          ClientAliveInterval 300
+          ClientAliveCountMax 2
+
+    - name: Validate SSH configuration
+      command: sshd -t
+      changed_when: false
+
+    - name: Restart SSH service
+      service:
+        name: ssh
+        state: restarted
+
+    - name: Configure Fail2Ban for SSH protection
+      copy:
+        dest: /etc/fail2ban/jail.d/sshd.local
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [sshd]
+          enabled = true
+          port = ssh
+          filter = sshd
+          logpath = %(sshd_log)s
+          maxretry = 5
+          findtime = 10m
+          bantime = 1h
+
+    - name: Ensure Fail2Ban service is enabled and running
+      service:
+        name: fail2ban
+        state: started
+        enabled: true
+
+    - name: Show Fail2Ban status
+      command: systemctl is-active fail2ban
+      register: fail2ban_status
+      changed_when: false
+
+    - name: Display hardening result
+      debug:
+        msg:
+          - "Basic hardening completed successfully."
+          - "Fail2Ban status: {{ fail2ban_status.stdout }}"
+          - "SSH password login disabled."
+          - "Root SSH login disabled."
