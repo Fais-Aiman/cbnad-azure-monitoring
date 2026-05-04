@@ -152,12 +152,13 @@ This project has been upgraded with Ansible to automate server configuration aft
 ansible/
 ├── ansible.cfg
 ├── group_vars/
-│   └── monitoring.yml
+│   └── monitoring.example.yml
 ├── inventories/
 │   └── dev.ini
 ├── playbooks/
 │   ├── 01-install-docker.yml
-│   └── 02-deploy-monitoring.yml
+│   ├── 02-deploy-monitoring.yml
+│   └── 03-basic-hardening.yml
 └── templates/
     ├── alerts.yml.j2
     ├── docker-compose.yml.j2
@@ -172,6 +173,7 @@ This project includes two Ansible playbooks that automate the server configurati
 |---|---|
 | `ansible/playbooks/01-install-docker.yml` | Installs Docker Engine and the Docker Compose plugin on the Azure Ubuntu VM |
 | `ansible/playbooks/02-deploy-monitoring.yml` | Deploys the monitoring stack using Docker Compose |
+| `ansible/playbooks/03-basic-hardening.yml` | Applies basic server hardening, SSH hardening, Fail2Ban protection, and unattended security updates |
 
 #### 1. Docker Installation Playbook
 
@@ -203,6 +205,39 @@ Automated tasks include:
 - Displaying the running containers for verification
 
 The Ansible automation connects to the Azure VM through SSH, applies the required configuration, and starts the monitoring services as containers.
+
+#### 3. Basic Server Hardening Playbook
+
+The basic server hardening playbook improves the baseline security of the Azure Ubuntu VM.
+
+Automated tasks include:
+
+- Updating the Ubuntu package index
+- Installing basic security and administration packages
+- Installing and enabling Fail2Ban
+- Enabling unattended security updates
+- Disabling SSH password authentication
+- Disabling root SSH login
+- Enabling SSH public key authentication
+- Validating SSH configuration before restarting the SSH service
+- Verifying Fail2Ban service status
+
+The playbook was verified by confirming that SSH key-based login still works and that Fail2Ban is active with the `sshd` jail enabled.
+
+```bash
+sudo systemctl status fail2ban
+sudo fail2ban-client status
+```
+
+Expected Fail2Ban result:
+
+```text
+Status
+|- Number of jail: 1
+`- Jail list: sshd
+```
+
+This hardening step improves the project from a basic monitoring deployment into a more security-aware cloud operations lab.
 
 ## ⚙️ Deployment Guide
 
@@ -244,7 +279,12 @@ Deploy the monitoring stack using Docker Compose:
 ```bash
 ansible-playbook -i ansible/inventories/dev.ini ansible/playbooks/02-deploy-monitoring.yml
 ```
+```markdown
+Apply basic server hardening:
 
+```bash
+ansible-playbook -i ansible/inventories/dev.ini ansible/playbooks/03-basic-hardening.yml
+```
 ---
 
 ### 3. Verify Docker Compose Services
@@ -373,6 +413,7 @@ Pipeline steps:
 - Linux System Administration
 - Docker Compose-based service deployment
 - Monitoring & Observability
+- Basic Server Hardening and SSH Security
 - DevOps Automation
 
 🎯 Key Takeaway
