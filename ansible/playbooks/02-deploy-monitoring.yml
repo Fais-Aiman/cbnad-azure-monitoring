@@ -15,6 +15,50 @@
         group: azureuser
         mode: '0755'
 
+    - name: Create monitoring directory
+      file:
+        path: "{{ monitoring_dir }}"
+        state: directory
+        owner: azureuser
+        group: azureuser
+        mode: '0755'
+
+    - name: Create Grafana provisioning directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: azureuser
+        group: azureuser
+        mode: '0755'
+      loop:
+        - "{{ monitoring_dir }}/grafana/provisioning/datasources"
+        - "{{ monitoring_dir }}/grafana/provisioning/dashboards"
+        - "{{ monitoring_dir }}/grafana/dashboards"
+
+    - name: Copy Grafana Prometheus datasource provisioning file
+      template:
+        src: ../templates/grafana-datasource.yml.j2
+        dest: "{{ monitoring_dir }}/grafana/provisioning/datasources/prometheus.yml"
+        owner: azureuser
+        group: azureuser
+        mode: '0644'
+
+    - name: Copy Grafana dashboard provider provisioning file
+      template:
+        src: ../templates/grafana-dashboard-provider.yml.j2
+        dest: "{{ monitoring_dir }}/grafana/provisioning/dashboards/dashboard-provider.yml"
+        owner: azureuser
+        group: azureuser
+        mode: '0644'
+
+    - name: Copy Grafana Node Overview dashboard
+      copy:
+        src: ../files/grafana-dashboard-node.json
+        dest: "{{ monitoring_dir }}/grafana/dashboards/node-overview.json"
+        owner: azureuser
+        group: azureuser
+        mode: '0644'
+
     - name: Copy Docker Compose file
       template:
         src: ../templates/docker-compose.yml.j2

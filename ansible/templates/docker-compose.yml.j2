@@ -100,6 +100,8 @@ services:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+      - /opt/cbnad/grafana/provisioning:/etc/grafana/provisioning:ro
+      - /opt/cbnad/grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks:
       - cbnad-net
 
