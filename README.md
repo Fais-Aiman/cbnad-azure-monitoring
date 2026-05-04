@@ -171,7 +171,7 @@ ansible/
 
 ### Ansible Playbooks
 
-This project includes two Ansible playbooks that automate the server configuration and monitoring stack deployment after Terraform provisions the Azure infrastructure.
+This project includes three Ansible playbooks that automate the server configuration and monitoring stack deployment after Terraform provisions the Azure infrastructure.
 
 | Playbook | Purpose |
 |---|---|
@@ -390,11 +390,14 @@ Grafana / Prometheus / Zabbix Running
 
 ## 💡 Key Features
 
-- Fully automated cloud deployment (IaC)
-- Containerized monitoring stack
+- Fully automated cloud deployment using Terraform
+- Post-provisioning configuration using Ansible
+- Containerized monitoring stack using Docker Compose
+- Grafana data source and dashboard provisioning
 - Real-time anomaly detection
 - Alert + recovery workflow
 - Multi-tool observability integration
+- Basic server hardening with SSH security and Fail2Ban
 
 ## 🧰 Tech Stack
 
@@ -428,8 +431,8 @@ Pipeline steps:
 - GitHub Actions deployment with Azure Service Principal
 - Ansible Vault for secure variable management
 - Separate development and production Ansible inventories
-- Automated Grafana dashboard provisioning
 - Multi-node monitoring
+- Backup and restore strategy for monitoring data
 - Kubernetes deployment
 - AI-based anomaly detection
 
